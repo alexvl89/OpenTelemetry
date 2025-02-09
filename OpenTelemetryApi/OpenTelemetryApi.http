@@ -4,3 +4,6 @@ GET {{OpenTelemetryApi_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET {{OpenTelemetryApi_HostAddress}}/users
+Accept: application/json

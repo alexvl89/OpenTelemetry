@@ -14,3 +14,6 @@ docker run --name jaeger \
   -d --restart=unless-stopped \
   jaegertracing/opentelemetry-all-in-one:latest
 ```
+
+### Пример запросов к web api в jaeger
+![Результат вывода jaeger UI при запросах к web api](image.png)

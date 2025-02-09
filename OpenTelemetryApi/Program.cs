@@ -1,9 +1,13 @@
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using OpenTelemetryApi.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMemoryCache();  // Register IMemoryCache
+builder.Services.AddScoped<IUserService, UserService>();  // Register UserService
 
 // Configure OpenTelemetry
 builder.Services.AddOpenTelemetry()
@@ -31,13 +35,23 @@ builder.Services.AddOpenTelemetry()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    //app.UseSwagger(); // Enable the Swagger JSON endpoint
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Your Custom Title");
+    }); // Enable the Swagger UI
 }
+
 
 app.UseHttpsRedirection();
 
@@ -63,6 +77,15 @@ app.MapGet("/weatherforecast", async () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+
+app.MapGet("/users", async (IUserService userService) =>
+{
+    var users = await userService.GetUsers();
+    return Results.Ok(users);
+})
+.WithName("GetUsers")
+.WithOpenApi();
 
 app.Run();
 
